@@ -12,21 +12,21 @@ function $$ (selector, context = document) {
 // }
 
 let pages = [
-	{url: "", title: "Home"},
-	{url: "projects/", title: "Projects"},
-	{url: "contact/", title: "Contact"},
-	{url: "cv/", title: "CV"},
+	{url: ".", title: "Home"},
+	{url: "projects", title: "Projects"},
+	{url: "contact", title: "Contact"},
+	{url: "cv", title: "CV"},
 	{url: "https://github.com/juliacamacho", title: "Github"}
 ];
 
 let nav = document.createElement("nav");
 document.body.prepend(nav);
 
-const ARE_WE_HOME = document.documentElement.classList.contains("home");
+// const ARE_WE_HOME = document.documentElement.classList.contains("home");
 
 for (let p of pages) {
 	let url = p.url;
-	url = !ARE_WE_HOME && !url.startsWith("http") ? "../" + url : url;
+	// url = !ARE_WE_HOME && !url.startsWith("http") ? "../" + url : url;
 	// url = "/11c35_portfolio" + url;
 	let title = p.title;
 

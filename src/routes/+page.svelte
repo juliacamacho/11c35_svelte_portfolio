@@ -1,5 +1,5 @@
 <svelte:head>
-	<title>Homee</title>
+	<title>Home</title>
 </svelte:head>
 <h1>Julia Camacho</h1>
     <p>Hi! I'm a junior majoring in Course 11-6 (Urban Science and Planning with Computer Science).</p>
