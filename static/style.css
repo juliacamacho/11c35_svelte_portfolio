@@ -62,13 +62,6 @@ img {
 img.home {
 	max-width: 20%;
 }
-label.color-scheme {
-	position: absolute;
-	top: 1rem;
-	right: 1rem;
-	font-size: 80%;
-	font-family: inherit;
-}
 
 .projects {
 	display: grid;
