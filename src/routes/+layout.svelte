@@ -14,11 +14,7 @@
     $: localStorage.colorScheme = colorScheme;
 
 </script>
-<nav>
-	{#each pages as p }
-		<a href={p.url}>{p.title}</a>
-	{/each}
-</nav>
+
 <label class="color-scheme">
     Theme:
     <select bind:value={ colorScheme }>
