@@ -1,6 +1,7 @@
 <script>
     import projects from '$lib/projects.json';
     import Project from "$lib/Project.svelte";
+    import Pie from '$lib/Pie.svelte';
 </script>
 <svelte:head>
 	<title>Projects</title>
@@ -11,3 +12,4 @@
         <Project info={p} />
     {/each}
 </div>
+<Pie />

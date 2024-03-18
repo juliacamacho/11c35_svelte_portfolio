@@ -1,61 +1,73 @@
 [
     {
+        "title": "Knowsy",
+        "year": "2023",
+        "image": "https://vis-society.github.io/labs/2/images/empty.svg",
+        "description": "A location-based platform for neighborhood residents to track, share, and discuss city development projects in their community."
+    },
+    {
+        "title": "AcceCity",
+        "year": "2022",
+        "image": "https://vis-society.github.io/labs/2/images/empty.svg",
+        "description": " An AI-powered mapping platform that helps local governments and city planners improve urban accessibility."
+    },
+    {
+        "title": "GrassrootsGov",
+        "year": "2020",
+        "image": "https://vis-society.github.io/labs/2/images/empty.svg",
+        "description": "A platform for everyday political engagement and activism that centers accountability, transparency, and community.."
+    },
+    {
+        "title": "NoFall",
+        "year": "2021",
+        "image": "https://vis-society.github.io/labs/2/images/empty.svg",
+        "description": "A remote caregiving system with ambient activity monitoring, risk assessments, fall detection, and more."
+    },
+    {
+        "title": "36 Hour Fitness",
+        "year": "2020",
+        "image": "https://vis-society.github.io/labs/2/images/empty.svg",
+        "description": " An AI-powered virtual personal trainer that enhances the quality of home workouts."
+    },
+    {
         "title": "Lorem ipsum dolor sit.",
+        "year": "2024",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Numquam aliquid voluptates necessitatibus tempore, reiciendis commodi similique eveniet dolore quod provident molestias expedita praesentium blanditiis, facilis animi, quibusdam quisquam nisi quas?"
-    },
-    {
-        "title": "Nisi cum deleniti nulla.",
-        "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Perspiciatis veritatis dicta fugit, ab impedit odit sed distinctio officiis. Ipsum, officia? Quam temporibus aut accusamus expedita aperiam reprehenderit optio eos non. Tempore dolorum libero iusto officia velit assumenda minus."
-    },
-    {
-        "title": "Sapiente magnam provident a.",
-        "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Itaque facilis veniam illum magnam nulla doloribus odit animi veritatis autem in voluptate consequuntur, sapiente beatae aliquam perferendis cupiditate laboriosam asperiores eos non aperiam excepturi. Id accusantium blanditiis cum quos."
-    },
-    {
-        "title": "Exercitationem deserunt quos qui?",
-        "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Quo modi a hic ducimus, rem officiis doloribus quae mollitia? Dolorem deserunt in molestiae tempora, rerum explicabo quo officiis architecto nisi iure odit placeat assumenda non facilis odio deleniti delectus."
-    },
-    {
-        "title": "Consequatur consequuntur tempora laudantium?",
-        "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Fuga velit praesentium commodi deleniti quod optio tenetur ad, esse molestias ea ullam laudantium tempora adipisci architecto odit, accusamus earum aperiam porro officia neque. Perferendis architecto assumenda totam eos obcaecati?"
-    },
-    {
-        "title": "Ipsam cum accusamus suscipit.",
-        "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Reiciendis repellat optio dolorem. Vel, tempore! Dicta autem eum necessitatibus quae, voluptatibus minus? Incidunt rerum, maxime aliquid animi, expedita eaque voluptates temporibus eveniet distinctio dolorem optio omnis porro voluptatum non?"
+        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam dolor quos, quod assumenda explicabo odio, nobis ipsa laudantium quas eum veritatis ullam sint porro minima modi molestias doloribus cumque odit."
     },
     {
         "title": "Nihil, similique beatae. Ullam!",
+        "year": "2024",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Nesciunt minima eum tempore reprehenderit perferendis odit sequi voluptas doloribus iusto ipsam? Dolorum exercitationem vero atque sed rem tempora. Id nisi quibusdam vel, quisquam ullam ducimus cumque in totam molestiae."
     },
     {
         "title": "Eveniet perspiciatis error maxime!",
+        "year": "2023",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Quis necessitatibus pariatur maiores debitis beatae eius sed animi suscipit, tenetur nihil nemo libero? Quasi commodi officiis nobis eveniet deleniti possimus laudantium exercitationem pariatur, veritatis nulla. Quasi totam quas possimus!"
     },
     {
         "title": "Necessitatibus sit soluta sunt.",
+        "year": "2018",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Veniam suscipit reprehenderit, voluptatibus dolorem quos corporis adipisci, maxime repellat mollitia, minus aspernatur iure omnis possimus ab fugit voluptas impedit laboriosam. Accusantium libero quibusdam odio consectetur eius reiciendis voluptatum nam?"
     },
     {
         "title": "Commodi autem voluptatem architecto!",
+        "year": "2019",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Ea numquam consequuntur voluptate totam voluptatem iste sequi eaque dignissimos qui recusandae tenetur ut, quas ullam rerum, amet enim incidunt. Obcaecati ut ab id laborum? Nihil, hic eligendi! Velit, officia?"
     },
     {
         "title": "Officiis sequi voluptatibus totam?",
+        "year": "2022",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Dolor commodi, ex earum id sed tempora, quasi est voluptas harum illum corporis temporibus ut dolorum doloremque. Ipsum, sequi molestiae accusantium ad minus aliquid libero dolore tempore! Nesciunt, alias beatae?"
     },
     {
         "title": "Fugiat provident commodi nemo.",
+        "year": "2021",
         "image": "https://vis-society.github.io/labs/2/images/empty.svg",
         "description": "Dolor in officia dolorem, molestias recusandae alias explicabo expedita corporis, tempore accusamus ex soluta delectus impedit inventore optio voluptatem rem ratione nihil placeat odio! Suscipit exercitationem dolorum sapiente odit minima?"
     }
