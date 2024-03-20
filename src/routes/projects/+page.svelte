@@ -39,7 +39,6 @@
     let selectedYear;
     $: selectedYear = selectedYearIndex > -1 ? pieData[selectedYearIndex].label : null;
 
-
 </script>
 
 <svelte:head>
