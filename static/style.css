@@ -149,3 +149,12 @@ article {
 #research {
 	color: #ea580c;
 }
+
+dl.stats {
+	display: grid;
+	grid-template-columns: 20% 30%;
+
+	dt {
+		font-weight: bold;
+	}
+}
