@@ -106,17 +106,10 @@
 			// console.log("no selection")
 			return false;
 		}
-		// console.log("brushSelection:", brushSelection);
-		// console.log("commit:", commit);
 		let min = {x: brushSelection[0][0], y: brushSelection[0][1]};
 		let max = {x: brushSelection[1][0], y: brushSelection[1][1]};
-		// console.log("min:", min);
-		// console.log("max:", max);
 		let x = xScale(commit.date);
 		let y = yScale(commit.hourFrac);
-		// console.log("x:", x);
-		// console.log("y:", y);
-		// console.log(x >= min.x && x <= max.x && y >= min.y && y <= max.y)
 		return x >= min.x && x <= max.x && y >= min.y && y <= max.y;
 	}
 
