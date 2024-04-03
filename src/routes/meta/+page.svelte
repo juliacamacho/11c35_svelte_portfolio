@@ -1,6 +1,7 @@
 <script>
 	import * as d3 from "d3";
 	import { onMount } from "svelte";
+	import Pie from "$lib/Pie.svelte";
 
 	let data = [];
 	let commits = [];
@@ -39,7 +40,7 @@
 			return ret;
 		});
 
-		// console.log(commits) 
+		console.log(commits);
 
 	});
 
@@ -127,6 +128,9 @@
 	$: selectedCommits = brushSelection ? commits.filter(isCommitSelected) : [];
 	$: hasSelection = brushSelection && selectedCommits.length > 0;
 
+	$: selectedLines = (hasSelection ? selectedCommits : commits).flatMap(d => d.lines);
+	$: languageBreakdown =  d3.rollups(selectedLines, v => v.length, d => d.type);
+
 
 </script>
 
@@ -193,7 +197,16 @@
 	<dd>{ hoveredCommit.totalLines }</dd>
 </dl>
 <p>{hasSelection ? selectedCommits.length : "No"} commits selected</p>
+<div class="language">
+{#each languageBreakdown as [language, lines] }
+	<div>
+		<p class="language-title">{language}</p>
+		<p>{lines} lines ({d3.format(".2f")((lines / selectedLines.length) * 100)}%)</p>
+	</div>
 
+{/each}
+</div>
+<Pie data={Array.from(languageBreakdown).map(([language, lines]) => ({label: language, value: lines}))} />
 
 <style>
 	svg {
@@ -202,6 +215,15 @@
 
 	.gridlines {
 		stroke-opacity: .2;
+	}
+
+	.language-title {
+		font-weight: bold;
+	}
+
+	.language {
+		display: grid;
+		grid-template-columns: 25% 25% 25% 25%;
 	}
 
 	dl.info {
@@ -239,7 +261,7 @@
 	}
 
 	.selected {
-		color: red;
+		fill: red;
 	}
 
 </style>
