@@ -40,7 +40,7 @@
 			return ret;
 		});
 
-		console.log(commits);
+		// console.log(commits);
 
 	});
 

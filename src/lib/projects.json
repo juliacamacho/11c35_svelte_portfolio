@@ -30,10 +30,11 @@
         "description": " An AI-powered virtual personal trainer that enhances the quality of home workouts."
     },
     {
-        "title": "Lorem ipsum dolor sit.",
+        "title": "Bikewatching",
         "year": "2024",
-        "image": "https://vis-society.github.io/labs/2/images/empty.svg",
-        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam dolor quos, quod assumenda explicabo odio, nobis ipsa laudantium quas eum veritatis ullam sint porro minima modi molestias doloribus cumque odit."
+        "image": "./images/bikewatching.png",
+        "description": "A data visualization that displays Boston's bike traffic throughout the day.",
+        "url": "https://juliacamacho.github.io/bikewatching/"
     },
     {
         "title": "Nihil, similique beatae. Ullam!",
