@@ -2,6 +2,11 @@
 	import * as d3 from "d3";
 	import { onMount } from "svelte";
 	import Pie from "$lib/Pie.svelte";
+	import {
+		computePosition,
+		autoPlacement,
+		offset,
+	} from '@floating-ui/dom';
 
 	let data = [];
 	let commits = [];
@@ -91,26 +96,22 @@
 	let hoveredIndex = -1;
 	$: hoveredCommit = commits[hoveredIndex] ?? {};
 
-	let cursor = {x: 0, y: 0};
-
 	let svg;
-	let brushSelection;
 
 	function brushed (evt) {
-		// console.log(evt);
-		brushSelection = evt.selection;
+		let brushSelection = evt.selection;
+		selectedCommits = !brushSelection ? [] : commits.filter(commit => {
+			let min = {x: brushSelection[0][0], y: brushSelection[0][1]};
+			let max = {x: brushSelection[1][0], y: brushSelection[1][1]};
+			let x = xScale(commit.date);
+			let y = yScale(commit.hourFrac);
+
+			return x >= min.x && x <= max.x && y >= min.y && y <= max.y;
+		});
 	}
 
 	function isCommitSelected (commit) {
-		if (!brushSelection) {
-			// console.log("no selection")
-			return false;
-		}
-		let min = {x: brushSelection[0][0], y: brushSelection[0][1]};
-		let max = {x: brushSelection[1][0], y: brushSelection[1][1]};
-		let x = xScale(commit.date);
-		let y = yScale(commit.hourFrac);
-		return x >= min.x && x <= max.x && y >= min.y && y <= max.y;
+		return selectedCommits.includes(commit);
 	}
 
 	$: {
@@ -118,11 +119,36 @@
 		d3.select(svg).selectAll(".dots, .overlay ~ *").raise();
 	}
 
-	$: selectedCommits = brushSelection ? commits.filter(isCommitSelected) : [];
-	$: hasSelection = brushSelection && selectedCommits.length > 0;
+	let selectedCommits = [];
+	$: hasSelection = selectedCommits.length > 0;
 
 	$: selectedLines = (hasSelection ? selectedCommits : commits).flatMap(d => d.lines);
 	$: languageBreakdown =  d3.rollups(selectedLines, v => v.length, d => d.type);
+
+	let commitTooltip;
+	let tooltipPosition = {x: 0, y: 0};
+
+	async function dotInteraction (index, evt) {
+		let hoveredDot = evt.target;
+			
+		if (evt.type === "mouseenter" || evt.type === "focus") {
+			hoveredIndex = index;
+			tooltipPosition = await computePosition(hoveredDot, commitTooltip, {
+				strategy: "fixed", // because we use position: fixed
+				middleware: [
+					offset(5), // spacing from tooltip to dot
+					autoPlacement() // see https://floating-ui.com/docs/autoplacement
+				],
+			});
+		}
+		else if (evt.type === "mouseleave" || evt.type === "blur") {
+			hoveredIndex = -1
+		}
+		else if (evt.type === "click" || (evt.type = "keyup" && evt.key == "Enter")) {
+			selectedCommits = [commits[index]];
+			// console.log("selectedCommits:", selectedCommits);
+		}
+	}
 
 
 </script>
@@ -163,17 +189,21 @@
 				cy={ yScale(commit.hourFrac) }
 				r="5"
 				fill="steelblue"
-				on:mouseenter={evt => {
-					hoveredIndex = index;
-					cursor = {x: evt.x, y: evt.y};
-				}}
-				on:mouseleave={evt => hoveredIndex = -1}
+				tabindex="0"
+				aria-describedby="commit-tooltip"
+				aria-haspopup="true"
 				class:selected={isCommitSelected(commit)}
+				on:mouseenter={evt => dotInteraction(index, evt)}
+				on:mouseleave={evt => dotInteraction(index, evt)}
+				on:focus={evt => dotInteraction(index, evt)}
+				on:blur={evt => dotInteraction(index, evt)}
+				on:click={evt => dotInteraction(index, evt)}
+				on:keyup={evt => dotInteraction(index, evt)}
 			/>
 		{/each}
 	</g>	
 </svg>
-<dl id="commit-tooltip" class="info tooltip" hidden={hoveredIndex === -1} style="top: {cursor.y}px; left: {cursor.x}px">
+<dl id="commit-tooltip" class="info tooltip" role="tooltip" bind:this={commitTooltip} hidden={hoveredIndex === -1} style="top: {tooltipPosition.y}px; left: {tooltipPosition.x}px">
 	<dt>Commit</dt>
 	<dd><a href="{ hoveredCommit.url }" target="_blank">{ hoveredCommit.id }</a></dd>
 
