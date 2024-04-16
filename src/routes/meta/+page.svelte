@@ -49,12 +49,22 @@
 
 	});
 
-	$: numDays = d3.groups(data, d => d.date).length;
+	// Filtering by time
+	let commitProgress = 100;
+	$: timeScale = d3.scaleTime(d3.extent(data, (d) => d.datetime), [0, 100]).nice();
+	$: commitMaxTime = timeScale.invert(commitProgress);
 
-	$: fileLengths = d3.rollups(data, v => d3.max(v, v => v.line), d => d.file);
+	$: filteredCommits = commits.filter(commit => commit.datetime <= commitMaxTime)
+	$: filteredLines = data.filter(line => line.datetime <= commitMaxTime)
+
+
+	// Summary stats
+	$: numDays = d3.groups(filteredLines, d => d.date).length;
+
+	$: fileLengths = d3.rollups(filteredLines, v => d3.max(v, v => v.line), d => d.file);
 	$: averageFileLength = Math.round(d3.mean(fileLengths, d => d[1]));
 
-	$: workByPeriod = d3.rollups(data, v => v.length, d => d.datetime.toLocaleString("en", {dayPeriod: "short"}));
+	$: workByPeriod = d3.rollups(filteredLines, v => v.length, d => d.datetime.toLocaleString("en", {dayPeriod: "short"}));
 	$: maxPeriod = d3.greatest(workByPeriod, (d) => d[1])?.[0];
 
 
@@ -74,7 +84,7 @@
 	usableArea.height = usableArea.bottom - usableArea.top;
 
 	// $: console.log(d3.extent(data, (d) => d.datetime));
-	$: xScale = d3.scaleTime(d3.extent(data, (d) => d.datetime), [usableArea.left, usableArea.right]).nice();
+	$: xScale = d3.scaleTime(d3.extent(filteredLines, (d) => d.datetime), [usableArea.left, usableArea.right]).nice();
 
 	$: yScale = d3.scaleLinear()
 		.domain([0, 24])
@@ -94,9 +104,11 @@
 	}
 
 	let hoveredIndex = -1;
-	$: hoveredCommit = commits[hoveredIndex] ?? {};
+	$: hoveredCommit = filteredCommits[hoveredIndex] ?? {};
 
 	let svg;
+
+	// Selecting commits by brushing
 
 	function brushed (evt) {
 		let brushSelection = evt.selection;
@@ -150,7 +162,6 @@
 		}
 	}
 
-
 </script>
 
 <svelte:head>
@@ -158,8 +169,13 @@
 </svelte:head>
 <h1>Meta</h1>
 <p>This page includes stats about the code of this website.</p>
-
 <h2>Summary</h2>
+
+<label>
+	<input type=range bind:value={commitProgress}/>
+	<time>{commitMaxTime.toLocaleString("en", {dateStyle: "long", timeStyle: "short"})}</time>
+</label>
+
 <dl class="stats">
 	<dt>Total <abbr title="Lines of code">LOC</abbr></dt>
 	<dd>{data.length}</dd>
@@ -183,7 +199,7 @@
 	<g transform="translate(0, {usableArea.bottom})" bind:this={xAxis} />
 	<g transform="translate({usableArea.left}, 0)" bind:this={yAxis} />
 	<g class="dots">
-		{#each commits as commit, index }
+		{#each filteredCommits as commit, index }
 			<circle
 				cx={ xScale(commit.datetime) }
 				cy={ yScale(commit.hourFrac) }
