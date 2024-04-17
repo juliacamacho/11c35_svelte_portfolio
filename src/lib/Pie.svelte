@@ -115,7 +115,7 @@
         {#each pieData as d, index (d.label)}
             <li style="--color: { colors(d.label) }"                 class:selected={selectedIndex === index}>
                 <span class="swatch"></span>
-                {d.latrabel} <em>({d.value})</em>
+                {d.label} <em>({d.value})</em>
             </li>
         {/each}
     </ul>
