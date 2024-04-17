@@ -177,6 +177,11 @@
 
 	let colors = d3.scaleOrdinal(d3.schemeTableau10);
 
+	let commitMessages = ["established my website", "created my projects page", "added my CV and contact page", "improved my projects page",
+						"improved my contact page", "added a pie chart", "added projects to my projects page", "improved my pie chart", "improved my home page",
+						"improved my home page again by adding statistics", "added a meta page", "improed the meta page by adding dynamic statistics",
+						"improved my meta page by adding visualizations", "improved my meta page by adding scrolling"]
+
 </script>
 
 
@@ -214,9 +219,9 @@
 	{#each commits as commit, index }
 		<p>
 			On {commit.datetime.toLocaleString("en", {dateStyle: "full", timeStyle: "short"})},
-			I made <a href="{commit.url}" target="_blank">{ index > 0 ? 'another glorious commit' : 'my first commit, and it was glorious' }</a>.
+			I made <a href="{commit.url}" target="_blank">{ index > 0 ? 'another commit' : 'my first commit' }</a>.
 			I edited {commit.totalLines} lines across { d3.rollups(commit.lines, D => D.length, d => d.file).length } files.
-			Then I looked over all I had made, and I saw that it was very good.
+			In this commit, I {index < commitMessages.length ? commitMessages[index] : "made more improvements"}.
 		</p>
 	{/each}
 	<svelte:fragment slot="viz">
@@ -286,7 +291,7 @@
 			On {commit.datetime.toLocaleString("en", {dateStyle: "full", timeStyle: "short"})},
 			I made <a href="{commit.url}" target="_blank">{ index > 0 ? 'another glorious commit' : 'my first commit, and it was glorious' }</a>.
 			I edited {commit.totalLines} lines across { d3.rollups(commit.lines, D => D.length, d => d.file).length } files.
-			Then I looked over all I had made, and I saw that it was very good.
+			In this commit, I {index < commitMessages.length ? commitMessages[index] : "made more improvements"}.
 		</p>
 	{/each}
 	<svelte:fragment slot="viz">
