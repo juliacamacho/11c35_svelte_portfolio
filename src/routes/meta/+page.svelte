@@ -289,7 +289,7 @@
 	{#each commits as commit, index }
 		<p>
 			On {commit.datetime.toLocaleString("en", {dateStyle: "full", timeStyle: "short"})},
-			I made <a href="{commit.url}" target="_blank">{ index > 0 ? 'another glorious commit' : 'my first commit, and it was glorious' }</a>.
+			I made <a href="{commit.url}" target="_blank">{ index > 0 ? 'another commit' : 'my first commit' }</a>.
 			I edited {commit.totalLines} lines across { d3.rollups(commit.lines, D => D.length, d => d.file).length } files.
 			In this commit, I {index < commitMessages.length ? commitMessages[index] : "made more improvements"}.
 		</p>
@@ -298,7 +298,6 @@
 		<FileLines lines={filesFilteredLines} colors={colors}/>
 	</svelte:fragment>
 </Scrolly>
-
 
 
 <style>

@@ -53,7 +53,7 @@
 
                 let transition = transitionArc(wedge, label);
                 return transition?.interpolator;
-                
+
             });
     }
 
@@ -85,12 +85,16 @@
     }
 
     function arc (wedge) {
-        // Calculations that will only be done once per element go here
+        let transition = transitionArc(wedge);
+        if (!transition) {
+            return;
+        }
         return {
             duration: transitionDuration,
+            easing: d3.easeCubic,
             css: (t, u) => {
                 // t is a number between 0 and 1 that represents the transition progress; u is 1 - t
-                // TODO return CSS to be applied for the current t as a string
+                return(`d: ${transition.interpolator(transition.type === "out" ? u : t)}`)
             }
         }
     }
