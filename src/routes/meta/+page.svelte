@@ -2,6 +2,7 @@
 	import * as d3 from "d3";
 	import { onMount } from "svelte";
 	import Pie from "$lib/Pie.svelte";
+	import FileLines from "./FileLines.svelte"
 	import {
 		computePosition,
 		autoPlacement,
@@ -68,7 +69,7 @@
 	$: maxPeriod = d3.greatest(workByPeriod, (d) => d[1])?.[0];
 
 
-	// scatterplot
+	// Scatterplot setup
 
 	let width = 1000, height = 600;
 	
@@ -162,7 +163,10 @@
 		}
 	}
 
+	let colors = d3.scaleOrdinal(d3.schemeTableau10);
+
 </script>
+
 
 <svelte:head>
 	<title>Meta</title>
@@ -175,6 +179,8 @@
 	<input type=range bind:value={commitProgress}/>
 	<time>{commitMaxTime.toLocaleString("en", {dateStyle: "long", timeStyle: "short"})}</time>
 </label>
+
+<FileLines lines={filteredLines} colors={colors}/>
 
 <dl class="stats">
 	<dt>Total <abbr title="Lines of code">LOC</abbr></dt>
@@ -199,7 +205,7 @@
 	<g transform="translate(0, {usableArea.bottom})" bind:this={xAxis} />
 	<g transform="translate({usableArea.left}, 0)" bind:this={yAxis} />
 	<g class="dots">
-		{#each filteredCommits as commit, index }
+		{#each filteredCommits as commit, index (commit.id) }
 			<circle
 				cx={ xScale(commit.datetime) }
 				cy={ yScale(commit.hourFrac) }
@@ -219,6 +225,8 @@
 		{/each}
 	</g>	
 </svg>
+
+<!-- tooltip -->
 <dl id="commit-tooltip" class="info tooltip" role="tooltip" bind:this={commitTooltip} hidden={hoveredIndex === -1} style="top: {tooltipPosition.y}px; left: {tooltipPosition.x}px">
 	<dt>Commit</dt>
 	<dd><a href="{ hoveredCommit.url }" target="_blank">{ hoveredCommit.id }</a></dd>
@@ -235,6 +243,7 @@
 	<dt>Lines Edited</dt>
 	<dd>{ hoveredCommit.totalLines }</dd>
 </dl>
+
 <p>{hasSelection ? selectedCommits.length : "No"} commits selected</p>
 <div class="language">
 {#each languageBreakdown as [language, lines] }
@@ -242,10 +251,11 @@
 		<p class="language-title">{language}</p>
 		<p>{lines} lines ({d3.format(".2f")((lines / selectedLines.length) * 100)}%)</p>
 	</div>
-
 {/each}
 </div>
-<Pie data={Array.from(languageBreakdown).map(([language, lines]) => ({label: language, value: lines}))} />
+
+<Pie data={Array.from(languageBreakdown).map(([language, lines]) => ({label: language, value: lines}))} colors={colors}/>
+
 
 <style>
 	svg {
@@ -297,6 +307,11 @@
 		&:hover {
 			transform: scale(1.5);
 		}
+
+		@starting-style {
+			r: 0;
+		}
+
 	}
 
 	.selected {

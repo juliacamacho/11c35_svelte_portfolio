@@ -14,7 +14,7 @@
         pieData = pieData.map((d, i) => ({...d, ...arcData[i], arc: arcs[i]}));
     };
 
-    let colors = d3.scaleOrdinal(d3.schemeTableau10);
+    export let colors = d3.scaleOrdinal(d3.schemeTableau10);
 
     export let selectedIndex = -1;
 
@@ -22,7 +22,7 @@
 <div class="container">
 	<svg viewBox="-50 -50 100 100">
         {#each pieData as d, index}
-            <path d={d.arc} fill={ colors(d.label) }
+            <path d={d.arc} fill={ colors(d.id ?? d.label) }
                 class:selected={selectedIndex === index}
                 on:click={e => selectedIndex = selectedIndex === index ? -1 : index} />
         {/each}
