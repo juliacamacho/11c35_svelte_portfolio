@@ -104,9 +104,13 @@
 		d3.select(yAxisGridlines).call(d3.axisLeft(yScale).tickFormat("").tickSize(-usableArea.width));
 	}
 
+	let hoveredCommit = [];
 	let hoveredIndex = -1;
-	$: hoveredCommit = filteredCommits[hoveredIndex] ?? {};
-
+	$: {
+		if (hoveredIndex !== -1 ) {
+			hoveredCommit = filteredCommits[hoveredIndex] ?? {};
+		} 
+	}
 	let svg;
 
 	// Selecting commits by brushing
@@ -149,7 +153,7 @@
 			tooltipPosition = await computePosition(hoveredDot, commitTooltip, {
 				strategy: "fixed", // because we use position: fixed
 				middleware: [
-					offset(5), // spacing from tooltip to dot
+					offset(10), // spacing from tooltip to dot
 					autoPlacement() // see https://floating-ui.com/docs/autoplacement
 				],
 			});
@@ -282,7 +286,7 @@
 			color: #5c5c5c;
 		}
 		transition-duration: 500ms;
-		transition-property: opacity, visibility;
+		/* transition-property: opacity, visibility; */
 
 		&[hidden]:not(:hover, :focus-within) {
 			opacity: 0;
