@@ -26,6 +26,22 @@
     $: console.log("WEDGES:", wedges);
     export let transitionDuration = 1000;
 
+    function getEmptyArc (label, data = pieData) {
+        // Union of old and new labels in the order they appear
+        let labels = d3.sort(new Set([...oldData, ...pieData].map(d => d.label)));
+        let labelIndex = labels.indexOf(label);
+        let sibling;
+        for (let i = labelIndex - 1; i >= 0; i--) {
+            sibling = data.find(d => d.label === labels[i]);
+            if (sibling) {
+                break;
+            }
+        }
+
+        let angle = sibling?.endAngle ?? 0;
+        return {startAngle: angle, endAngle: angle};
+    }
+
     function transitionArcs() {
         let wedgeElements = Object.values(wedges);
 
@@ -34,18 +50,51 @@
             .styleTween("d", function (_, index) {
                 let wedge = this;
                 let label = Object.keys(wedges)[index];
-                let d = pieData.find(d => d.label === label);
-                let d_old = oldData.find(d => d.label === label);
-                if (!d || !d_old) {
-                    return;
-                }
-                let from = {...d_old};
-                let to = {...d};
-                let angleInterpolator = d3.interpolate(from, to);
-                let interpolator = t => `path("${ arcGenerator(angleInterpolator(t)) }")`;
-                return interpolator;
+
+                let transition = transitionArc(wedge, label);
+                return transition?.interpolator;
+                
             });
     }
+
+    function sameArc(arc_1, arc_2) {
+        if ((!arc_1 && !arc_2) || (arc_1.startAngle == arc_2.startAngle && arc_1.endAngle == arc_2.endAngle)) {
+            return true;
+        }
+    }
+    
+    function transitionArc (wedge, label) {
+        label ??= Object.entries(wedges).find(([label, w]) => w === wedge)[0];
+
+        let d = pieData.find(d => d.label === label);
+        let d_old = oldData.find(d => d.label === label);
+
+        if (sameArc(d_old, d)) {
+            return null;
+        }
+
+        let from = d_old ? {...d_old} : getEmptyArc(label, oldData);
+        let to = d ? {...d} : getEmptyArc(label, data);
+
+        let angleInterpolator = d3.interpolate(from, to);
+        let interpolator = t => `path("${ arcGenerator(angleInterpolator(t)) }")`;
+        
+        let type = d ? d_old ? "update" : "in" : "out";
+        
+        return {d, d_old, from, to, interpolator, type};
+    }
+
+    function arc (wedge) {
+        // Calculations that will only be done once per element go here
+        return {
+            duration: transitionDuration,
+            css: (t, u) => {
+                // t is a number between 0 and 1 that represents the transition progress; u is 1 - t
+                // TODO return CSS to be applied for the current t as a string
+            }
+        }
+    }
+
 
 </script>
 <div class="container">
@@ -54,7 +103,8 @@
             <path d={d.arc} fill={ colors(d.id ?? d.label) }
                 class:selected={selectedIndex === index}
                 on:click={e => selectedIndex = selectedIndex === index ? -1 : index} 
-                bind:this={ wedges[d.label] } />
+                bind:this={ wedges[d.label] } 
+                transition:arc />
         {/each}
     </svg>
     <ul class="legend">
