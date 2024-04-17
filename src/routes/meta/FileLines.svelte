@@ -45,7 +45,7 @@
 
     dl {
         display: grid;
-        grid-template-columns: 30% auto;
+        grid-template-columns: auto auto;
         
         & > div {
             grid-column: 1 / -1;

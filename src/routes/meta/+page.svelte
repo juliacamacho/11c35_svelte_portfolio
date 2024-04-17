@@ -1,5 +1,6 @@
 <script>
 	import * as d3 from "d3";
+	import Scrolly from "svelte-scrolly";
 	import { onMount } from "svelte";
 	import Pie from "$lib/Pie.svelte";
 	import FileLines from "./FileLines.svelte"
@@ -57,6 +58,13 @@
 
 	$: filteredCommits = commits.filter(commit => commit.datetime <= commitMaxTime)
 	$: filteredLines = data.filter(line => line.datetime <= commitMaxTime)
+
+	let filesCommitProgress = 100;
+	$: filesTimeScale = d3.scaleTime(d3.extent(data, (d) => d.datetime), [0, 100]).nice();
+	$: filesCommitMaxTime = filesTimeScale.invert(filesCommitProgress);
+
+	$: filesFilteredCommits = commits.filter(commit => commit.datetime <= filesCommitMaxTime)
+	$: filesFilteredLines = data.filter(line => line.datetime <= filesCommitMaxTime)
 
 
 	// Summary stats
@@ -177,14 +185,13 @@
 </svelte:head>
 <h1>Meta</h1>
 <p>This page includes stats about the code of this website.</p>
+
 <h2>Summary</h2>
 
-<label>
+<!-- <label>
 	<input type=range bind:value={commitProgress}/>
 	<time>{commitMaxTime.toLocaleString("en", {dateStyle: "long", timeStyle: "short"})}</time>
-</label>
-
-<FileLines lines={filteredLines} colors={colors}/>
+</label> -->
 
 <dl class="stats">
 	<dt>Total <abbr title="Lines of code">LOC</abbr></dt>
@@ -203,65 +210,98 @@
 	<dd>{maxPeriod}</dd>
 </dl>
 
-<h2>Commits by Time of Day</h2>
-<svg viewBox="0 0 {width} {height}" bind:this={svg}>
-	<g class="gridlines" transform="translate({usableArea.left}, 0)" bind:this={yAxisGridlines} />
-	<g transform="translate(0, {usableArea.bottom})" bind:this={xAxis} />
-	<g transform="translate({usableArea.left}, 0)" bind:this={yAxis} />
-	<g class="dots">
-		{#each filteredCommits as commit, index (commit.id) }
-			<circle
-				cx={ xScale(commit.datetime) }
-				cy={ yScale(commit.hourFrac) }
-				r="5"
-				fill="steelblue"
-				tabindex="0"
-				aria-describedby="commit-tooltip"
-				aria-haspopup="true"
-				class:selected={isCommitSelected(commit)}
-				on:mouseenter={evt => dotInteraction(index, evt)}
-				on:mouseleave={evt => dotInteraction(index, evt)}
-				on:focus={evt => dotInteraction(index, evt)}
-				on:blur={evt => dotInteraction(index, evt)}
-				on:click={evt => dotInteraction(index, evt)}
-				on:keyup={evt => dotInteraction(index, evt)}
-			/>
+<Scrolly bind:progress={ commitProgress }>
+	{#each commits as commit, index }
+		<p>
+			On {commit.datetime.toLocaleString("en", {dateStyle: "full", timeStyle: "short"})},
+			I made <a href="{commit.url}" target="_blank">{ index > 0 ? 'another glorious commit' : 'my first commit, and it was glorious' }</a>.
+			I edited {commit.totalLines} lines across { d3.rollups(commit.lines, D => D.length, d => d.file).length } files.
+			Then I looked over all I had made, and I saw that it was very good.
+		</p>
+	{/each}
+	<svelte:fragment slot="viz">
+		<h2>Commits by Time of Day</h2>
+		<svg viewBox="0 0 {width} {height}" bind:this={svg}>
+			<g class="gridlines" transform="translate({usableArea.left}, 0)" bind:this={yAxisGridlines} />
+			<g transform="translate(0, {usableArea.bottom})" bind:this={xAxis} />
+			<g transform="translate({usableArea.left}, 0)" bind:this={yAxis} />
+			<g class="dots">
+				{#each filteredCommits as commit, index (commit.id) }
+					<circle
+						cx={ xScale(commit.datetime) }
+						cy={ yScale(commit.hourFrac) }
+						r="5"
+						fill="steelblue"
+						tabindex="0"
+						aria-describedby="commit-tooltip"
+						aria-haspopup="true"
+						class:selected={isCommitSelected(commit)}
+						on:mouseenter={evt => dotInteraction(index, evt)}
+						on:mouseleave={evt => dotInteraction(index, evt)}
+						on:focus={evt => dotInteraction(index, evt)}
+						on:blur={evt => dotInteraction(index, evt)}
+						on:click={evt => dotInteraction(index, evt)}
+						on:keyup={evt => dotInteraction(index, evt)}
+					/>
+				{/each}
+			</g>	
+		</svg>
+
+		<!-- tooltip -->
+		<dl id="commit-tooltip" class="info tooltip" role="tooltip" bind:this={commitTooltip} hidden={hoveredIndex === -1} style="top: {tooltipPosition.y}px; left: {tooltipPosition.x}px">
+			<dt>Commit</dt>
+			<dd><a href="{ hoveredCommit.url }" target="_blank">{ hoveredCommit.id }</a></dd>
+
+			<dt>Date</dt>
+			<dd>{ hoveredCommit.datetime?.toLocaleDateString("en", {date: "full"}) }</dd>
+
+			<dt>Time</dt>
+			<dd>{ hoveredCommit.datetime?.toLocaleTimeString() }</dd>
+
+			<dt>Author</dt>
+			<dd>{ hoveredCommit.author }</dd>
+
+			<dt>Lines Edited</dt>
+			<dd>{ hoveredCommit.totalLines }</dd>
+		</dl>
+
+		<p>{hasSelection ? selectedCommits.length : "No"} commits selected</p>
+		<div class="language">
+		{#each languageBreakdown as [language, lines] }
+			<div>
+				<p class="language-title">{language}</p>
+				<p>{lines} lines ({d3.format(".2f")((lines / selectedLines.length) * 100)}%)</p>
+			</div>
 		{/each}
-	</g>	
-</svg>
+		</div>
+		<Pie data={Array.from(languageBreakdown).map(([language, lines]) => ({label: language, value: lines}))} colors={colors}/>
+	</svelte:fragment>
+</Scrolly>
 
-<!-- tooltip -->
-<dl id="commit-tooltip" class="info tooltip" role="tooltip" bind:this={commitTooltip} hidden={hoveredIndex === -1} style="top: {tooltipPosition.y}px; left: {tooltipPosition.x}px">
-	<dt>Commit</dt>
-	<dd><a href="{ hoveredCommit.url }" target="_blank">{ hoveredCommit.id }</a></dd>
+<div style="margin-top: 10em"></div>
 
-	<dt>Date</dt>
-	<dd>{ hoveredCommit.datetime?.toLocaleDateString("en", {date: "full"}) }</dd>
+<Scrolly bind:progress={ filesCommitProgress } --scrolly-layout="viz-first" --scrolly-viz-width="1.5fr">
+	{#each commits as commit, index }
+		<p>
+			On {commit.datetime.toLocaleString("en", {dateStyle: "full", timeStyle: "short"})},
+			I made <a href="{commit.url}" target="_blank">{ index > 0 ? 'another glorious commit' : 'my first commit, and it was glorious' }</a>.
+			I edited {commit.totalLines} lines across { d3.rollups(commit.lines, D => D.length, d => d.file).length } files.
+			Then I looked over all I had made, and I saw that it was very good.
+		</p>
+	{/each}
+	<svelte:fragment slot="viz">
+		<FileLines lines={filesFilteredLines} colors={colors}/>
+	</svelte:fragment>
+</Scrolly>
 
-	<dt>Time</dt>
-	<dd>{ hoveredCommit.datetime?.toLocaleTimeString() }</dd>
-
-	<dt>Author</dt>
-	<dd>{ hoveredCommit.author }</dd>
-
-	<dt>Lines Edited</dt>
-	<dd>{ hoveredCommit.totalLines }</dd>
-</dl>
-
-<p>{hasSelection ? selectedCommits.length : "No"} commits selected</p>
-<div class="language">
-{#each languageBreakdown as [language, lines] }
-	<div>
-		<p class="language-title">{language}</p>
-		<p>{lines} lines ({d3.format(".2f")((lines / selectedLines.length) * 100)}%)</p>
-	</div>
-{/each}
-</div>
-
-<Pie data={Array.from(languageBreakdown).map(([language, lines]) => ({label: language, value: lines}))} colors={colors}/>
 
 
 <style>
+
+	:global(body) {
+		max-width: min(120ch, 80vw);
+	}
+
 	svg {
 		overflow: visible;
 	}
